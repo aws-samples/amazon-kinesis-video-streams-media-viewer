@@ -4,7 +4,7 @@ Easily view HLS output of Amazon Kinesis Video Streams
 
 * * *
 ## About
-This is a simple static webpage that simplifies testing and experiments with HLS output from Amazon Kinesis Video Streams.
+This is a simple static webpage that simplifies testing and experiments with HLS output from Amazon Kinesis Video Streams. This is based on the <a href="https://docs.aws.amazon.com/kinesisvideostreams/latest/dg/how-hls.html">documentation</a>.
 
 ## Getting Started
 The easiest and recommended approach is to use the Github-hosted version of this project. The second method is to clone/download this project and host it in your own S3 bucket or even locally.
