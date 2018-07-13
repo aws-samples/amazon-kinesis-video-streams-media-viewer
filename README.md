@@ -12,10 +12,10 @@ The easiest and recommended approach is to use the Github-hosted version of this
 ### Using the Github-hosted UI
 Because the project is a collection of static HTML and JavaScript, you can use the application without deploying the code into your own AWS account.
 
- To get started, go to the hosted [Kinesis Video Streams HLS Viewer](https://awslabs.github.io/amazon-kinesis-video-streams/).
+ To get started, go to the hosted [Kinesis Video Streams HLS Viewer](https://aws-samples.github.io/amazon-kinesis-video-streams-hls-viewer/).
 
 <br />
-<a href="https://awslabs.github.io/amazon-kinesis-video-streams/"><img border="0" src="sample_app.png"></a>
+<a href="https://aws-samples.github.io/amazon-kinesis-video-streams-hls-viewer/"><img border="0" src="sample_app.png"></a>
 
 ## License Summary
 
