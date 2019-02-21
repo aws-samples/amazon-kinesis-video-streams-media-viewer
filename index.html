@@ -5,7 +5,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.278.1/aws-sdk.min.js"></script>
+        <script src="https://sdk.amazonaws.com/js/aws-sdk-2.408.0.min.js"></script>
         <title>Amazon Kinesis Video Streams HLS Viewer</title>
     </head>
     <body>
@@ -17,7 +17,8 @@
                     <div class="form-group">
                         <label>Player</label>
                         <select id="player" class="form-control form-control-sm">
-                            <option selected>VideoJS</option>
+                            <option selected>HLS.js</option>
+                            <option>VideoJS</option>
                             <option>Shaka Player</option>
                         </select>
                     </div>
@@ -74,10 +75,24 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label>Container Format</label>
+                        <select id="containerFormat" class="form-control form-control-sm">
+                            <option selected="">FRAGMENTED_MP4</option>
+                            <option>MPEG_TS</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label>Discontinuity Mode</label>
                         <select id="discontinuityMode" class="form-control form-control-sm">
                             <option selected>ALWAYS</option>
                             <option>NEVER</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Display Fragment Timestamp</label>
+                        <select id="displayFragmentTimestamp" class="form-control form-control-sm">
+                            <option>ALWAYS</option>
+                            <option selected>NEVER</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -92,6 +107,10 @@
                 </div>
                 <div class="col-md-8">
                     <div id="playerContainer">
+
+                        <!-- HLS.js elemtns -->
+                        <video id="hlsjs" class="player" controls autoplay></video>
+                        <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
                         <!-- VideoJS elements -->
                         <video id="videojs" class="player video-js vjs-default-skin" controls autoplay></video>
@@ -149,7 +168,9 @@
                                 EndTimestamp: new Date($('#endTimestamp').val())
                             }
                         },
+                        ContainerFormat: $('#containerFormat').val(),
                         DiscontinuityMode: $('#discontinuityMode').val(),
+                        DisplayFragmentTimestamp: $('#displayFragmentTimestamp').val(),
                         MaxMediaPlaylistFragmentResults: parseInt($('#maxMediaPlaylistFragmentResults').val()),
                         Expires: parseInt($('#expires').val())
                     }, function(err, response) {
@@ -158,7 +179,21 @@
 
                         // Step 4: Give the URL to the video player.
                         var playerName = $('#player').val();
-                        if (playerName === 'VideoJS') {
+                        if (playerName == 'HLS.js') {
+                            var playerElement = $('#hlsjs');
+                            playerElement.show();
+                            var player = new Hls();
+                            console.log('Created HLS.js Player');
+
+                            player.loadSource(response.HLSStreamingSessionURL);
+                            player.attachMedia(playerElement[0]);
+                            console.log('Set player source');
+
+                            player.on(Hls.Events.MANIFEST_PARSED, function() {
+                                video.play();
+                                console.log('Starting playback');
+                            });
+                        } else if (playerName === 'VideoJS') {
                             var playerElement = $('#videojs');
                             playerElement.show();
                             var player = videojs('videojs');
@@ -203,7 +238,9 @@
                 'startTimestamp',
                 'endTimestamp',
                 'fragmentSelectorType',
+                'containerFormat',
                 'discontinuityMode',
+                'displayFragmentTimestamp',
                 'maxMediaPlaylistFragmentResults',
                 'expires'
             ].forEach(function(field) {
