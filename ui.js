@@ -87,12 +87,14 @@ function updateFieldsCorrespondingToStreamingProtocol() {
     });
     $('#player').trigger('change');  
 }
+updateFieldsCorrespondingToStreamingProtocol();
 
 function updateFieldsCorrespondingToPlaybackMode() {
     var isLive = $('#playbackMode').val() === 'LIVE';
     $('#startTimestamp').prop('disabled', isLive);
     $('#endTimestamp').prop('disabled', isLive);
 }
+updateFieldsCorrespondingToPlaybackMode();
 
 $('.loader').hide();
 $('.main').show();
