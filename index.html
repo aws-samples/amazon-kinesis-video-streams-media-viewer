@@ -4,6 +4,7 @@
         <link rel="stylesheet" href="loader.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.490.0/aws-sdk.min.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
         <link rel="icon" type="image/png" href="favicon.ico">
 
         <style>
@@ -186,18 +187,30 @@
             var DASH_PLAYERS = ['DASH.js', 'Shaka Player'];
             var HLS_PLAYERS = ['HLS.js', 'Shaka Player', 'VideoJS'];
 
-            $('#start').click(function() {
+            $('#start').click(async() => {
                 var protocol = $('#protocol').val();
-                var streamName = $('#streamName').val();
+                var streamName = "thing_stream_466f401"
+                let options
+
+                await axios.get('https://david.darwinist.io/proxy/5000/credentials')
+                    .then(function (response) {
+                        // handle success
+                        options = response.data.credentials;
+                    })
+                    .catch(function (error) {
+                        // handle error
+                        console.log(error);
+                    })
 
                 // Step 1: Configure SDK Clients
-                var options = {
+                /*  var options = {
                     accessKeyId: $('#accessKeyId').val(),
                     secretAccessKey: $('#secretAccessKey').val(),
                     sessionToken: $('#sessionToken').val() || undefined,
                     region: $('#region').val(),
                     endpoint: $('#endpoint').val() || undefined
-                }
+                } */
+
                 var kinesisVideo = new AWS.KinesisVideo(options);
                 var kinesisVideoArchivedContent = new AWS.KinesisVideoArchivedMedia(options);
 
