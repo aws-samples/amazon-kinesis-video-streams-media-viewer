@@ -1,12 +1,12 @@
 configureLogging();
 
 // Update all of the corresonding fields when switching protocol or playback mode
-$('#protocol').change(function() {
+/* $('#protocol').change(function() {
     updateFieldsCorrespondingToStreamingProtocol();
 });
 $('#playbackMode').change(function() {
     updateFieldsCorrespondingToPlaybackMode();
-});
+}); */
 
 // Read/Write all of the fields to/from localStorage so that fields are not lost on refresh.
 [
@@ -47,9 +47,6 @@ $('#playbackMode').change(function() {
     });
 });
 
-// Initially hide the player elements
-$('.player').hide();
-
 function configureLogging() {
     console._error = console.error;
     console.error = function(messages) {
@@ -73,13 +70,16 @@ function configureLogging() {
     }
 }
 
+/* var HLS_PLAYERS = ['VideoJS'];
+
 function updateFieldsCorrespondingToStreamingProtocol() {
     var isDASH = $('#protocol').val() === 'DASH';
     $('#containerFormat').prop('disabled', isDASH);
     $('#discontinuityMode').prop('disabled', isDASH);  
     $('#displayFragmentNumber').prop('disabled', !isDASH); 
 
-    var players = isDASH ? DASH_PLAYERS : HLS_PLAYERS;
+    var players = HLS_PLAYERS;
+    console.log(players)
     $('#player').empty();
     players.forEach(function (player) {
         var option = $('<option>').text(player);
@@ -94,7 +94,7 @@ function updateFieldsCorrespondingToPlaybackMode() {
     $('#startTimestamp').prop('disabled', isLive);
     $('#endTimestamp').prop('disabled', isLive);
 }
-updateFieldsCorrespondingToPlaybackMode();
+updateFieldsCorrespondingToPlaybackMode(); */
 
 $('.loader').hide();
 $('.main').show();

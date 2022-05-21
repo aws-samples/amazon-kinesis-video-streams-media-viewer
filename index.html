@@ -30,37 +30,19 @@
                     <h1>Amazon Kinesis Video Streams Media Viewer</h1>
                     Documentation:
                     <a href="https://docs.aws.amazon.com/kinesisvideostreams/latest/dg/API_reader_GetHLSStreamingSessionURL.html">HLS</a>
-                    -
-                    <a href="https://docs.aws.amazon.com/kinesisvideostreams/latest/dg/API_reader_GetDASHStreamingSessionURL.html">DASH</a>
-                </div>
+                                </div>
             </div>
             <div class="row loader"></div>
             <div class="main">
                 <div class="row">
-                    <div class="col-md-4">
-                        <button id="start" type="submit" class="btn btn-primary">Start Playback</button>
-                    </div>
                     <div class="col-md-8">
                         <div id="playerContainer">
 
-                            <!-- HLS.js elements -->
-                            <video id="hlsjs" class="player" controls autoplay></video>
-                            <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
                             <!-- VideoJS elements -->
-                            <video id="videojs" class="player video-js vjs-default-skin" controls autoplay></video>
+                            <video id="videojs" class="player video-js vjs-default-skin" controls></video>
                             <link rel="stylesheet" href="https://vjs.zencdn.net/6.6.3/video-js.css">
                             <script src="https://vjs.zencdn.net/6.6.3/video.js"></script>
                             <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.14.1/videojs-contrib-hls.js"></script>
-
-                            <!-- Shaka Player elements -->
-                            <video id="shaka" class="player" controls autoplay></video>
-                            <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/2.4.1/shaka-player.compiled.js">
-                            </script>
-
-                            <!-- DASH.js elements -->
-                            <video id="dashjs" class="player" controls autoplay=""></video>
-                            <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
                         </div>
 
                         <h3 style="margin-top: 20px;">Logs</h3>
@@ -71,77 +53,7 @@
                 </div>
             </div>
         </div>
-        <script>
-
-            $('#start').click(async() => {
-                var protocol = $('#protocol').val();
-                var streamName = "thing_stream_466f401"
-                let options
-
-                await axios.get('http://localhost:5000/credentials')
-                    .then(function (response) {
-                        // handle success
-                        options = response.data.credentials;
-                    })
-                    .catch(function (error) {
-                        // handle error
-                        console.log(error);
-                    })
-
-                var kinesisVideo = new AWS.KinesisVideo(options);
-                var kinesisVideoArchivedContent = new AWS.KinesisVideoArchivedMedia(options);
-
-                // Step 2: Get a data endpoint for the stream
-                console.log('Fetching data endpoint');
-                kinesisVideo.getDataEndpoint({
-                    StreamName: streamName,
-                    APIName: protocol === 'DASH' ? "GET_DASH_STREAMING_SESSION_URL" : "GET_HLS_STREAMING_SESSION_URL"
-                }, function(err, response) {
-                    if (err) { return console.error(err); }
-                    console.log('Data endpoint: ' + response.DataEndpoint);
-                    kinesisVideoArchivedContent.endpoint = new AWS.Endpoint(response.DataEndpoint);
-
-                    // Step 3: Get a Streaming Session URL
-                    var consoleInfo = 'Fetching ' + protocol + ' Streaming Session URL';
-                    console.log(consoleInfo);
-
-                    kinesisVideoArchivedContent.getHLSStreamingSessionURL({
-                        StreamName: streamName,
-                        PlaybackMode: $('#playbackMode').val(),
-                        HLSFragmentSelector: {
-                            FragmentSelectorType: $('#fragmentSelectorType').val(),
-                            TimestampRange: $('#playbackMode').val() === "LIVE" ? undefined : {
-                                StartTimestamp: new Date($('#startTimestamp').val()),
-                                EndTimestamp: new Date($('#endTimestamp').val())
-                            }
-                        },
-                        ContainerFormat: $('#containerFormat').val(),
-                        DiscontinuityMode: $('#discontinuityMode').val(),
-                        DisplayFragmentTimestamp: $('#displayFragmentTimestamp').val(),
-                        MaxMediaPlaylistFragmentResults: parseInt($('#maxResults').val()),
-                        Expires: parseInt($('#expires').val())
-                    }, function(err, response) {
-                        if (err) { return console.error(err); }
-                        console.log('HLS Streaming Session URL: ' + response.HLSStreamingSessionURL);
-
-                    // Video Player
-                    var playerElement = $('#videojs');
-                    playerElement.show();
-                    var player = videojs('videojs');
-                    console.log('Created VideoJS Player');
-                    player.src({
-                        src: response.HLSStreamingSessionURL,
-                        type: 'application/x-mpegURL'
-                    });
-                    console.log('Set player source');
-                    player.play();
-                    console.log('Starting playback');
-                    });
-                });
-
-                $('.player').hide();
-            });
-        </script>
         <script src="ui.js"></script>
+        <script src="stream.js"></script>
     </body>
 </html>
