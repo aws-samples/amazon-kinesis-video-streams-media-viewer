@@ -38,118 +38,6 @@
             <div class="main">
                 <div class="row">
                     <div class="col-md-4">
-                        <div class="form-group">
-                            <label>Streaming Protocol</label>
-                            <select id="protocol" class="form-control form-control-sm">
-                                <option>HLS</option>
-                                <option>DASH</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Player</label>
-                            <select id="player" class="form-control form-control-sm">
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Region</label>
-                            <select id="region" class="form-control form-control-sm">
-                                <option>ap-east-1</option>
-                                <option>ap-northeast-1</option>
-                                <option>ap-northeast-2</option>
-                                <option>ap-south-1</option>
-                                <option>ap-southeast-1</option>
-                                <option>ap-southeast-2</option>
-                                <option>ca-central-1</option>
-                                <option>eu-central-1</option>
-                                <option>eu-west-1</option>
-                                <option>eu-west-2</option>
-                                <option>eu-west-3</option>
-                                <option>sa-east-1</option>
-                                <option selected>us-east-1</option>
-                                <option>us-east-2</option>
-                                <option>us-west-2</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>AWS Access Key</label>
-                            <input id="accessKeyId" type="password" class="form-control form-control-sm"/>
-                        </div>
-                        <div class="form-group">
-                            <label>AWS Secret Key</label>
-                            <input id="secretAccessKey" type="password" class="form-control form-control-sm"/>
-                        </div>
-                        <div class="form-group">
-                            <label>AWS Session Token (Optional)</label>
-                            <input id="sessionToken" type="password" class="form-control form-control-sm" />
-                        </div>
-                        <div class="form-group">
-                            <label>Endpoint (Optional)</label>
-                            <input id="endpoint" type="text" class="form-control form-control-sm" />
-                        </div>
-                        <div class="form-group">
-                            <label>Stream name</label>
-                            <input id="streamName" type="text" class="form-control form-control-sm"/>
-                        </div>
-                        <div class="form-group">
-                            <label>Playback Mode</label>
-                            <select id="playbackMode" class="form-control form-control-sm">
-                                <option selected>LIVE</option>
-                                <option>LIVE_REPLAY</option>
-                                <option>ON_DEMAND</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Start Timestamp</label>
-                            <input id="startTimestamp" type="datetime-local" class="form-control form-control-sm"/>
-                        </div>
-                        <div class="form-group">
-                            <label>End Timestamp</label>
-                            <input id="endTimestamp" type="datetime-local" class="form-control form-control-sm"/>
-                        </div>
-                        <div class="form-group">
-                            <label>Fragment Selector Type</label>
-                            <select id="fragmentSelectorType" class="form-control form-control-sm">
-                                <option selected>SERVER_TIMESTAMP</option>
-                                <option>PRODUCER_TIMESTAMP</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Container Format</label>
-                            <select id="containerFormat" class="form-control form-control-sm">
-                                <option selected="">FRAGMENTED_MP4</option>
-                                <option>MPEG_TS</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Discontinuity Mode</label>
-                            <select id="discontinuityMode" class="form-control form-control-sm">
-                                <option selected>ALWAYS</option>
-                                <option>NEVER</option>
-                                <option>ON_DISCONTINUITY</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Display Fragment Timestamp</label>
-                            <select id="displayFragmentTimestamp" class="form-control form-control-sm">
-                                <option>ALWAYS</option>
-                                <option selected>NEVER</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Display Fragment Number</label>
-                            <select id="displayFragmentNumber" class="form-control form-control-sm">
-                                <option>ALWAYS</option>
-                                <option selected>NEVER</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Max Manifest/Playlist Fragment Results</label>
-                            <input id="maxResults" type="text" class="form-control form-control-sm"/>
-                        </div>
-                        <div class="form-group">
-                            <label>Expires (seconds)</label>
-                            <input id="expires" type="text" class="form-control form-control-sm"/>
-                        </div>
                         <button id="start" type="submit" class="btn btn-primary">Start Playback</button>
                     </div>
                     <div class="col-md-8">
@@ -184,15 +72,13 @@
             </div>
         </div>
         <script>
-            var DASH_PLAYERS = ['DASH.js', 'Shaka Player'];
-            var HLS_PLAYERS = ['HLS.js', 'Shaka Player', 'VideoJS'];
 
             $('#start').click(async() => {
                 var protocol = $('#protocol').val();
                 var streamName = "thing_stream_466f401"
                 let options
 
-                await axios.get('https://david.darwinist.io/proxy/5000/credentials')
+                await axios.get('http://localhost:5000/credentials')
                     .then(function (response) {
                         // handle success
                         options = response.data.credentials;
@@ -201,15 +87,6 @@
                         // handle error
                         console.log(error);
                     })
-
-                // Step 1: Configure SDK Clients
-                /*  var options = {
-                    accessKeyId: $('#accessKeyId').val(),
-                    secretAccessKey: $('#secretAccessKey').val(),
-                    sessionToken: $('#sessionToken').val() || undefined,
-                    region: $('#region').val(),
-                    endpoint: $('#endpoint').val() || undefined
-                } */
 
                 var kinesisVideo = new AWS.KinesisVideo(options);
                 var kinesisVideoArchivedContent = new AWS.KinesisVideoArchivedMedia(options);
@@ -228,117 +105,43 @@
                     var consoleInfo = 'Fetching ' + protocol + ' Streaming Session URL';
                     console.log(consoleInfo);
 
-                    if (protocol === 'DASH') {
-                        kinesisVideoArchivedContent.getDASHStreamingSessionURL({
-                            StreamName: streamName,
-                            PlaybackMode: $('#playbackMode').val(),
-                            DASHFragmentSelector: {
-                                FragmentSelectorType: $('#fragmentSelectorType').val(),
-                                TimestampRange: $('#playbackMode').val() === "LIVE" ? undefined : {
-                                    StartTimestamp: new Date($('#startTimestamp').val()),
-                                    EndTimestamp: new Date($('#endTimestamp').val())
-                                }
-                            },
-                            DisplayFragmentTimestamp: $('#displayFragmentTimestamp').val(),
-                            DisplayFragmentNumber: $('#displayFragmentNumber').val(),
-                            MaxManifestFragmentResults: parseInt($('#maxResults').val()),
-                            Expires: parseInt($('#expires').val())
-                        }, function(err, response) {
-                            if (err) { return console.error(err); }
-                            console.log('DASH Streaming Session URL: ' + response.DASHStreamingSessionURL);
-
-                            // Step 4: Give the URL to the video player.
-                            var playerName = $('#player').val();
-
-                            if (playerName === 'Shaka Player') {
-                                var playerElement = $('#shaka');
-                                playerElement.show();
-
-                                var player = new shaka.Player(playerElement[0]);
-                                console.log('Created Shaka Player');
-
-                                player.load(response.DASHStreamingSessionURL).then(function() {
-                                    console.log('Starting playback');
-                                });
-                                console.log('Set player source');
-                            } else if(playerName === 'DASH.js') {
-                                var playerElement = $('#dashjs');
-                                playerElement.show();
-
-                                var player = dashjs.MediaPlayer().create();
-                                console.log('Created DASH.js Player');
-
-                                player.initialize(document.querySelector('#dashjs'), response.DASHStreamingSessionURL, true);
-                                console.log('Starting playback');
-                                console.log('Set player source');
+                    kinesisVideoArchivedContent.getHLSStreamingSessionURL({
+                        StreamName: streamName,
+                        PlaybackMode: $('#playbackMode').val(),
+                        HLSFragmentSelector: {
+                            FragmentSelectorType: $('#fragmentSelectorType').val(),
+                            TimestampRange: $('#playbackMode').val() === "LIVE" ? undefined : {
+                                StartTimestamp: new Date($('#startTimestamp').val()),
+                                EndTimestamp: new Date($('#endTimestamp').val())
                             }
-                        });
-                    } else {
-                        kinesisVideoArchivedContent.getHLSStreamingSessionURL({
-                            StreamName: streamName,
-                            PlaybackMode: $('#playbackMode').val(),
-                            HLSFragmentSelector: {
-                                FragmentSelectorType: $('#fragmentSelectorType').val(),
-                                TimestampRange: $('#playbackMode').val() === "LIVE" ? undefined : {
-                                    StartTimestamp: new Date($('#startTimestamp').val()),
-                                    EndTimestamp: new Date($('#endTimestamp').val())
-                                }
-                            },
-                            ContainerFormat: $('#containerFormat').val(),
-                            DiscontinuityMode: $('#discontinuityMode').val(),
-                            DisplayFragmentTimestamp: $('#displayFragmentTimestamp').val(),
-                            MaxMediaPlaylistFragmentResults: parseInt($('#maxResults').val()),
-                            Expires: parseInt($('#expires').val())
-                        }, function(err, response) {
-                            if (err) { return console.error(err); }
-                            console.log('HLS Streaming Session URL: ' + response.HLSStreamingSessionURL);
+                        },
+                        ContainerFormat: $('#containerFormat').val(),
+                        DiscontinuityMode: $('#discontinuityMode').val(),
+                        DisplayFragmentTimestamp: $('#displayFragmentTimestamp').val(),
+                        MaxMediaPlaylistFragmentResults: parseInt($('#maxResults').val()),
+                        Expires: parseInt($('#expires').val())
+                    }, function(err, response) {
+                        if (err) { return console.error(err); }
+                        console.log('HLS Streaming Session URL: ' + response.HLSStreamingSessionURL);
 
-                            // Step 4: Give the URL to the video player.
-                            var playerName = $('#player').val();
-                            if (playerName == 'HLS.js') {
-                                var playerElement = $('#hlsjs');
-                                playerElement.show();
-                                var player = new Hls();
-                                console.log('Created HLS.js Player');
-                                player.loadSource(response.HLSStreamingSessionURL);
-                                player.attachMedia(playerElement[0]);
-                                console.log('Set player source');
-                                player.on(Hls.Events.MANIFEST_PARSED, function() {
-                                    video.play();
-                                    console.log('Starting playback');
-                                });
-                            } else if (playerName === 'VideoJS') {
-                                var playerElement = $('#videojs');
-                                playerElement.show();
-                                var player = videojs('videojs');
-                                console.log('Created VideoJS Player');
-                                player.src({
-                                    src: response.HLSStreamingSessionURL,
-                                    type: 'application/x-mpegURL'
-                                });
-                                console.log('Set player source');
-                                player.play();
-                                console.log('Starting playback');
-                            } else if (playerName === 'Shaka Player') {
-                                var playerElement = $('#shaka');
-                                playerElement.show();
-                                var player = new shaka.Player(playerElement[0]);
-                                console.log('Created Shaka Player');
-                                player.load(response.HLSStreamingSessionURL).then(function() {
-                                    console.log('Starting playback');
-                                });
-                                console.log('Set player source');
-                            }
-                        });
-                    }
+                    // Video Player
+                    var playerElement = $('#videojs');
+                    playerElement.show();
+                    var player = videojs('videojs');
+                    console.log('Created VideoJS Player');
+                    player.src({
+                        src: response.HLSStreamingSessionURL,
+                        type: 'application/x-mpegURL'
+                    });
+                    console.log('Set player source');
+                    player.play();
+                    console.log('Starting playback');
+                    });
                 });
 
                 $('.player').hide();
             });
         </script>
         <script src="ui.js"></script>
-        <a href="https://github.com/aws-samples/amazon-kinesis-video-streams-media-viewer">
-            <img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_orange_ff7600.png" alt="Fork me on GitHub">
-        </a>
     </body>
 </html>
