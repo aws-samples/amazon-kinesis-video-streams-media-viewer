@@ -32,6 +32,14 @@ jobs:
     # public Actions logs and is readable only by jobs that entered this environment.
     environment: kvs-notify
     steps:
+      # configure-aws-credentials prints the assumed role ID, which encodes the account id.
+      # GitHub masks a secret only when the job uses it, so register the role ID first. Fail if
+      # the secret is missing, so the role ID is never printed unmasked.
+      - name: Mask the role ID
+        env:
+          ROLE_ID: ${{ secrets.KVS_NOTIFY_ROLE_ID }}
+        run: echo "::add-mask::${ROLE_ID:?KVS_NOTIFY_ROLE_ID is not set}"
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
