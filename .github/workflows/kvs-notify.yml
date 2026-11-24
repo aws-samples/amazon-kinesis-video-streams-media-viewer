@@ -8,7 +8,7 @@ name: kvs-notify
 
 on:
   pull_request_target:
-    types: [opened, ready_for_review]
+    types: [opened, ready_for_review, reopened]
   issues:
     types: [opened]
 
@@ -48,13 +48,21 @@ jobs:
             (if $ev == "issues" then .issue else .pull_request end) as $o
             | select($o.user.type != "Bot" and ($o.user.login | endswith("[bot]") | not))
             | select($ev == "issues" or .action == "ready_for_review" or ($o.draft | not))
-            | {kind: (if $ev == "issues" then "issue" else "pr" end),
-               repo: .repository.full_name,
-               number: $o.number,
-               title: ($o.title | .[0:300]),
-               url: $o.html_url,
-               author: $o.user.login,
-               created_at: $o.created_at}
+            | ({kind: (if $ev == "issues" then "issue" else "pr" end),
+                repo: .repository.full_name,
+                number: $o.number,
+                title: ($o.title | .[0:300]),
+                url: $o.html_url,
+                author: $o.user.login,
+                created_at: $o.created_at}
+               + if $ev == "issues" then {} else {
+                   head_sha: $o.head.sha,
+                   base_sha: $o.base.sha,
+                   base_ref: $o.base.ref,
+                   is_fork: $o.head.repo.fork,
+                   author_association: ($o.author_association // ""),
+                   body: (($o.body // "") | .[0:20000])
+                 } end)
           ' "$GITHUB_EVENT_PATH" > message.json
           if [ ! -s message.json ]; then
             echo "Filtered out (bot author or draft)."
