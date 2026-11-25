@@ -66,10 +66,11 @@ function applyQueryParameters() {
 
     // Apply only explicitly allowlisted, non-secret URL parameters. Never add credentials or
     // endpoint: URLs can be retained in browser history, copied, or logged.
+    // Protocol must be applied before player because changing protocol rebuilds the player options.
     ['protocol', 'player', 'region', 'playbackMode'].forEach(function(field) {
         var value = parameters.get(field);
         var select = document.getElementById(field);
-        if (value !== null && selectHasValue(select, value)) {
+        if (value !== null && select && select.options && selectHasValue(select, value)) {
             $(select).val(value);
             $(select).trigger('change');
         }
