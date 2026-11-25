@@ -47,6 +47,41 @@ $('#playbackMode').change(function() {
     });
 });
 
+function selectHasValue(select, value) {
+    for (var i = 0; i < select.options.length; i++) {
+        if (select.options[i].value === value) { return true; }
+    }
+    return false;
+}
+
+function applyQueryParameters() {
+    if (typeof URLSearchParams === 'undefined') { return; }
+
+    var parameters;
+    try {
+        parameters = new URLSearchParams(window.location.search);
+    } catch (e) {
+        return;
+    }
+
+    // Apply only explicitly allowlisted, non-secret URL parameters. Never add credentials or
+    // endpoint: URLs can be retained in browser history, copied, or logged.
+    ['protocol', 'player', 'region', 'playbackMode'].forEach(function(field) {
+        var value = parameters.get(field);
+        var select = document.getElementById(field);
+        if (value !== null && selectHasValue(select, value)) {
+            $(select).val(value);
+            $(select).trigger('change');
+        }
+    });
+
+    var streamName = parameters.get('streamName');
+    if (streamName !== null && /^[a-zA-Z0-9_.-]{1,256}$/.test(streamName)) {
+        $('#streamName').val(streamName);
+        $('#streamName').trigger('change');
+    }
+}
+
 // Initially hide the player elements
 $('.player').hide();
 
@@ -95,6 +130,7 @@ function updateFieldsCorrespondingToPlaybackMode() {
     $('#endTimestamp').prop('disabled', isLive);
 }
 updateFieldsCorrespondingToPlaybackMode();
+applyQueryParameters();
 
 $('.loader').hide();
 $('.main').show();
