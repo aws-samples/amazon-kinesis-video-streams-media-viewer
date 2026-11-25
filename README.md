@@ -17,6 +17,23 @@ Because the project is a collection of static HTML and JavaScript, you can use t
 <br />
 <a href="https://aws-samples.github.io/amazon-kinesis-video-streams-media-viewer/"><img border="0" src="sample_app.png"></a>
 
+### Pre-populate playback settings
+
+Selected non-sensitive fields can be pre-populated with URL query parameters. For example:
+
+```
+https://aws-samples.github.io/amazon-kinesis-video-streams-media-viewer/?protocol=HLS&player=HLS.js&region=us-west-2&streamName=example-stream&playbackMode=LIVE
+```
+
+Supported parameters are `protocol`, `player`, `region`, `streamName`, and `playbackMode`.
+Parameter names and option values are case-sensitive. Values must match an option shown by the page;
+`streamName` must satisfy the Kinesis Video Streams name constraints. Invalid values are ignored. URL
+parameters override values restored from local storage and become the saved values for later visits.
+
+For security, `accessKeyId`, `secretAccessKey`, `sessionToken`, and `endpoint` are never read from
+URL parameters. URLs can be retained in browser history, copied, or logged. Enter these values in
+the form instead, and include only non-sensitive values in links.
+
 ## License Summary
 
 This sample code is made available under a modified MIT license. See the LICENSE file.
