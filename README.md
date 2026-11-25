@@ -26,9 +26,9 @@ https://aws-samples.github.io/amazon-kinesis-video-streams-media-viewer/?protoco
 ```
 
 Supported parameters are `protocol`, `player`, `region`, `streamName`, and `playbackMode`.
-Values must match an option shown by the page; `streamName` must satisfy the Kinesis Video Streams
-name constraints. Invalid values are ignored. URL parameters override values restored from local
-storage and become the saved values for later visits.
+Parameter names and option values are case-sensitive. Values must match an option shown by the page;
+`streamName` must satisfy the Kinesis Video Streams name constraints. Invalid values are ignored. URL
+parameters override values restored from local storage and become the saved values for later visits.
 
 For security, `accessKeyId`, `secretAccessKey`, `sessionToken`, and `endpoint` are never read from
 URL parameters. URLs can be retained in browser history, copied, or logged. Enter these values in
